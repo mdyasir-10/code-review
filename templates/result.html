@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Results - Code Security Scanner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header h1 { color: #2d3748; margin-bottom: 10px; }
+        .header p { color: #718096; margin: 5px 0; }
+        .risk-badge { display: inline-block; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: bold; text-transform: uppercase; margin-top: 10px; }
+        .risk-critical, .risk-high { background: #fed7d7; color: #c53030; }
+        .risk-medium { background: #fef5e7; color: #dd6b20; }
+        .risk-low { background: #f0fff4; color: #38a169; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .stat-number { font-size: 28px; font-weight: bold; margin-bottom: 5px; }
+        .stat-label { color: #718096; font-size: 14px; }
+        .high { color: #e53e3e; }
+        .medium { color: #dd6b20; }
+        .low { color: #38a169; }
+        .total { color: #4a5568; }
+        .vuln-section { background: white; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
+        .vuln-header { padding: 15px 20px; background: #f7fafc; border-bottom: 1px solid #e2e8f0; }
+        .vuln-header h3 { color: #2d3748; }
+        .vuln-item { padding: 20px; border-bottom: 1px solid #f1f5f9; }
+        .vuln-item:last-child { border-bottom: none; }
+        .vuln-meta { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+        .line-number { background: #e2e8f0; color: #4a5568; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+        .severity { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .sev-high { background: #fed7d7; color: #c53030; }
+        .sev-medium { background: #fef5e7; color: #dd6b20; }
+        .sev-low { background: #f0fff4; color: #38a169; }
+        .vuln-code { background: #1a202c; color: #f7fafc; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 13px; margin: 10px 0; overflow-x: auto; border-left: 4px solid #4299e1; }
+        .vuln-description { color: #4a5568; margin: 10px 0; }
+        .recommendation { background: #edf2f7; padding: 12px; border-radius: 6px; margin-top: 10px; border-left: 4px solid #38a169; }
+        .recommendation strong { color: #2d3748; }
+        .no-vulns { text-align: center; padding: 60px 20px; color: #38a169; }
+        .no-vulns h3 { font-size: 24px; margin-bottom: 10px; }
+        .back-btn { background: #4299e1; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; font-weight: 500; transition: background 0.2s; }
+        .back-btn:hover { background: #3182ce; }
+        .risk-score { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+        .risk-score h3 { margin-bottom: 10px; color: #2d3748; }
+        .score-value { font-size: 32px; font-weight: bold; margin: 10px 0; }
+        @media (max-width: 768px) { 
+            .container { padding: 10px; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .vuln-meta { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Security Scan Results</h1>
+            <p><strong>File:</strong> {{ report.scan_metadata.filename }}</p>
+            <p><strong>Language:</strong> {{ report.scan_metadata.language }}</p>
+            <p><strong>Scanned:</strong> {{ report.scan_metadata.scan_date.split('T')[0] }} at {{ report.scan_metadata.scan_date.split('T')[1][:8] }}</p>
+            <span class="risk-badge risk-{{ report.summary.risk_level.lower() }}">{{ report.summary.risk_level }} Risk ({{ report.summary.risk_percentage }}%)</span>
+        </div>
+
+        {% if report.summary.risk_score > 0 %}
+        <div class="risk-score">
+            <h3>Risk Score</h3>
+            <div class="score-value" style="color: {% if report.summary.risk_level == 'Critical' %}#e53e3e{% elif report.summary.risk_level == 'High' %}#dd6b20{% elif report.summary.risk_level == 'Medium' %}#f6ad55{% else %}#38a169{% endif %}">
+                {{ report.summary.risk_score }}
+            </div>
+            <p>Based on severity and count of vulnerabilities found</p>
+        </div>
+        {% endif %}
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number total">{{ report.summary.total_vulnerabilities }}</div>
+                <div class="stat-label">Total Issues</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number high">{{ report.summary.high_severity }}</div>
+                <div class="stat-label">High Severity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number medium">{{ report.summary.medium_severity }}</div>
+                <div class="stat-label">Medium Severity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number low">{{ report.summary.low_severity }}</div>
+                <div class="stat-label">Low Severity</div>
+            </div>
+        </div>
+
+        {% if report.summary.total_vulnerabilities > 0 %}
+            {% for category, vulns in report.vulnerability_categories.items() %}
+            <div class="vuln-section">
+                <div class="vuln-header">
+                    <h3>{{ category }} <span style="color: #718096; font-weight: normal;">({{ vulns|length }})</span></h3>
+                </div>
+                {% for vuln in vulns %}
+                <div class="vuln-item">
+                    <div class="vuln-meta">
+                        <span class="line-number">Line {{ vuln.line }}</span>
+                        <span class="severity sev-{{ vuln.severity.lower() }}">{{ vuln.severity }}</span>
+                    </div>
+                    <div class="vuln-code">{{ vuln.code }}</div>
+                    <div class="vuln-description">{{ vuln.description }}</div>
+                    <div class="recommendation">
+                        <strong>Recommendation:</strong> {{ vuln.recommendation }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            {% if report.recommendations %}
+            <div class="vuln-section">
+                <div class="vuln-header">
+                    <h3>Security Recommendations</h3>
+                </div>
+                <div class="vuln-item">
+                    {% if report.recommendations.immediate_actions %}
+                    <h4 style="color: #e53e3e; margin-bottom: 10px;">🚨 Immediate Actions Required:</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 20px;">
+                        {% for action in report.recommendations.immediate_actions %}
+                        <li style="margin-bottom: 5px; color: #4a5568;">{{ action }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    
+                    <h4 style="color: #2d3748; margin-bottom: 10px;">💡 General Security Best Practices:</h4>
+                    <ul style="margin-left: 20px;">
+                        {% for practice in report.recommendations.best_practices %}
+                        <li style="margin-bottom: 5px; color: #4a5568;">{{ practice }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="vuln-section">
+                <div class="no-vulns">
+                    <h3>✅ No Security Issues Found</h3>
+                    <p>Your code appears to be secure based on our vulnerability patterns. Keep following security best practices!</p>
+                </div>
+            </div>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="downloadReport()" class="back-btn" style="background: #38a169; margin-right: 10px;">📄 Download Report</button>
+            <a href="{{ url_for('upload_file') }}" class="back-btn">Scan Another File</a>
+        </div>
+    </div>
+
+    <script>
+        const reportData = {{ report | tojson }};
+        
+        function downloadReport() {
+            const report = generateTextReport(reportData);
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `security-report-${reportData.scan_metadata.filename}-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function generateTextReport(data) {
+            const date = new Date(data.scan_metadata.scan_date).toLocaleString();
+            let report = `
+SECURITY SCAN REPORT
+=====================================================================
+
+File Information:
+- Filename: ${data.scan_metadata.filename}
+- Language: ${data.scan_metadata.language}
+- Scan Date: ${date}
+- File Hash: ${data.scan_metadata.file_hash || 'N/A'}
+- Scanner Version: ${data.scan_metadata.scan_version}
+
+Risk Assessment:
+- Risk Level: ${data.summary.risk_level}
+- Risk Score: ${data.summary.risk_score}
+- Risk Percentage: ${data.summary.risk_percentage}%
+
+Vulnerability Summary:
+- Total Vulnerabilities: ${data.summary.total_vulnerabilities}
+- High Severity: ${data.summary.high_severity}
+- Medium Severity: ${data.summary.medium_severity}
+- Low Severity: ${data.summary.low_severity}
+
+=====================================================================
+`;
+
+            if (data.summary.total_vulnerabilities > 0) {
+                report += `
+DETAILED FINDINGS:
+=====================================================================
+`;
+                
+                Object.entries(data.vulnerability_categories).forEach(([category, vulns]) => {
+                    report += `
+${category.toUpperCase()} (${vulns.length} issue${vulns.length !== 1 ? 's' : ''})
+---------------------------------------------------------------------
+`;
+                    vulns.forEach((vuln, index) => {
+                        report += `
+${index + 1}. Line ${vuln.line} - ${vuln.severity} Severity
+   Code: ${vuln.code}
+   Description: ${vuln.description}
+   Recommendation: ${vuln.recommendation}
+`;
+                    });
+                });
+
+                if (data.recommendations) {
+                    report += `
+SECURITY RECOMMENDATIONS:
+=====================================================================
+`;
+                    if (data.recommendations.immediate_actions && data.recommendations.immediate_actions.length > 0) {
+                        report += `
+IMMEDIATE ACTIONS REQUIRED:
+`;
+                        data.recommendations.immediate_actions.forEach((action, index) => {
+                            report += `${index + 1}. ${action}\n`;
+                        });
+                    }
+
+                    report += `
+GENERAL SECURITY BEST PRACTICES:
+`;
+                    data.recommendations.best_practices.forEach((practice, index) => {
+                        report += `${index + 1}. ${practice}\n`;
+                    });
+                }
+            } else {
+                report += `
+SCAN RESULTS:
+=====================================================================
+✅ No security vulnerabilities were detected in this file.
+
+The code appears to follow secure coding practices based on our 
+vulnerability detection patterns. Continue following security best 
+practices to maintain code security.
+`;
+            }
+
+            report += `
+=====================================================================
+Report generated by Code Security Scanner
+For questions or support, please contact your security team.
+=====================================================================
+`;
+            return report;
+        }
+    </script>
+</body>
+</html>

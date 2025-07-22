@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - SecureCode Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #ffffff 0%, #fff8f4 100%); color: #2c3e50; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 140, 0, 0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 700; color: #ff8c00; text-decoration: none; }
+        .logo i { font-size: 2rem; background: linear-gradient(45deg, #ff8c00, #ffa500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { text-decoration: none; color: #2c3e50; font-weight: 500; transition: all 0.3s ease; padding: 0.5rem 1rem; border-radius: 8px; }
+        .nav-links a:hover, .nav-links a.active { color: #ff8c00; background: rgba(255, 140, 0, 0.1); }
+
+        .about-hero { margin-top: 80px; padding: 60px 0; text-align: center; background: linear-gradient(135deg, #2c3e50, #34495e); color: white; }
+        .about-hero h1 { font-size: 3rem; font-weight: 700; margin-bottom: 1rem; }
+        .about-hero p { font-size: 1.2rem; opacity: 0.9; }
+
+        .about-content { padding: 80px 0; }
+        .about-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: center; margin-bottom: 4rem; }
+        .profile-card { background: white; padding: 2rem; border-radius: 20px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1); text-align: center; }
+        .profile-img { width: 200px; height: 200px; border-radius: 50%; margin: 0 auto 1.5rem; background: linear-gradient(45deg, #ff8c00, #ffa500); padding: 5px; }
+        .profile-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .profile-card h2 { font-size: 1.8rem; color: #2c3e50; margin-bottom: 0.5rem; }
+        .profile-card .title { color: #ff8c00; font-weight: 600; margin-bottom: 1rem; }
+        .social-links { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
+        .social-links a { width: 40px; height: 40px; background: #ff8c00; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.3s ease; }
+        .social-links a:hover { transform: translateY(-3px); }
+
+        .about-text h3 { font-size: 2rem; color: #2c3e50; margin-bottom: 1.5rem; }
+        .about-text p { font-size: 1.1rem; color: #5a6c7d; margin-bottom: 1.5rem; }
+
+        .skills-section { background: white; padding: 60px 0; }
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .skill-card { background: #f8f9fa; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #ff8c00; }
+        .skill-card h4 { color: #2c3e50; margin-bottom: 0.5rem; }
+
+        .footer { background: #1a252f; color: white; padding: 40px 0 20px; text-align: center; }
+        .footer p { opacity: 0.8; }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .about-hero h1 { font-size: 2rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .profile-img { width: 150px; height: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="/" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SecureCode Scanner
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/upload">Scan Code</a></li>
+                <li><a href="/about" class="active">About</a></li>
+                <li><a href="/#features">Features</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="about-hero">
+        <div class="container">
+            <h1>About SecureCode Scanner</h1>
+            <p>Professional security analysis built by cybersecurity experts</p>
+        </div>
+    </section>
+
+    <section class="about-content">
+        <div class="container">
+            <div class="about-grid">
+                <div class="profile-card">
+                    <div class="profile-img">
+                        <!-- <img src="/templates/yasir.jpg" alt="Mohammad Yasir"> -->
+                    </div>
+                    <h2>Mohammad Yasir</h2>
+                    <p class="title">Associate Consultant - Offensive Security</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="about-text">
+                    <h3>Security Expert & Developer</h3>
+                    <p>With extensive experience in offensive security and penetration testing, I've developed SecureCode Scanner to help developers identify and remediate security vulnerabilities in their code before they reach production.</p>
+                    <p>As an Associate Consultant specializing in Offensive Security, I've witnessed firsthand how critical early-stage vulnerability detection is for maintaining robust application security. This tool combines industry best practices with automated analysis to provide comprehensive security insights.</p>
+                    <p>My mission is to make security accessible to all developers, regardless of their security background, through intuitive tools and actionable reporting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="skills-section">
+        <div class="container">
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h4><i class="fas fa-bug"></i> Vulnerability Assessment</h4>
+                    <p>Expert in identifying and analyzing security vulnerabilities across multiple platforms and languages.</p>
+                </div>
+                <div class="skill-card">
+                    <h4><i class="fas fa-code"></i> Secure Development</h4>
+                    <p>Extensive experience in secure coding practices and security-focused software development lifecycle.</p>
+                </div>
+                <div class="skill-card">
+                    <h4><i class="fas fa-shield-alt"></i> Penetration Testing</h4>
+                    <p>Certified professional in offensive security techniques and comprehensive security assessments.</p>
+                </div>
+                <div class="skill-card">
+                    <h4><i class="fas fa-chart-line"></i> Security Analysis</h4>
+                    <p>Advanced skills in static and dynamic analysis, threat modeling, and risk assessment methodologies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 SecureCode Scanner. Created by Mohammad Yasir - Offensive Security Consultant.</p>
+            <p>Built with security and performance in mind.</p>
+        </div>
+    </footer>
+</body>
+</html>

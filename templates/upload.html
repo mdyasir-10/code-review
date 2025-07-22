@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Code - SecureCode Scanner</title>
+    <meta name="description" content="Upload your code files for comprehensive security analysis and vulnerability detection">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #fff8f4 100%);
+            color: #2c3e50;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 140, 0, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff8c00;
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #ff8c00, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(255, 140, 0, 0.3));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: #ff8c00;
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        .nav-links a.active {
+            color: #ff8c00;
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .upload-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2c3e50, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            color: #5a6c7d;
+            margin-bottom: 2rem;
+        }
+
+        /* Upload Card */
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 140, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #ff8c00, #ffa500);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .card-body {
+            padding: 3rem;
+        }
+
+        /* File Upload Area */
+        .upload-area {
+            border: 3px dashed #e1e8ed;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: #ff8c00;
+            background: rgba(255, 140, 0, 0.02);
+        }
+
+        .upload-area.dragover {
+            border-color: #ff8c00;
+            background: rgba(255, 140, 0, 0.05);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #ff8c00;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .upload-text {
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-text h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-text p {
+            color: #5a6c7d;
+            font-size: 1rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .browse-btn {
+            background: linear-gradient(135deg, #ff8c00, #ffa500);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
+        }
+
+        /* File Info */
+        .file-info {
+            display: none;
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        .file-info.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .file-meta {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .file-size {
+            color: #5a6c7d;
+            font-size: 0.9rem;
+        }
+
+        .remove-file {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-file:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e1e8ed;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff8c00, #ffa500);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #5a6c7d;
+        }
+
+        /* Upload Button */
+        .upload-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .upload-btn.show {
+            display: block;
+        }
+
+        .upload-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(44, 62, 80, 0.3);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Supported Formats */
+        .supported-formats {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 140, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .supported-formats h3 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .format-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+            transition: all 0.3s ease;
+        }
+
+        .format-item:hover {
+            border-color: #ff8c00;
+            background: rgba(255, 140, 0, 0.05);
+        }
+
+        .format-icon {
+            color: #ff8c00;
+            font-size: 1.2rem;
+        }
+
+        .format-name {
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        /* Security Notice */
+        .security-notice {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .security-notice h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .security-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .security-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+            color: #5a6c7d;
+        }
+
+        .security-features li i {
+            color: #4caf50;
+            font-size: 1rem;
+        }
+
+        /* Error Messages */
+        .error-message {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(255, 140, 0, 0.1);
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff8c00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            color: #5a6c7d;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .card-body {
+                padding: 2rem;
+            }
+
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+
+            .formats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+
+            .file-details {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav container">
+            <a href="/" class="logo">
+                <i class="fas fa-shield-alt"></i>
+                SecureCode Scanner
+            </a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/upload" class="active">Scan Code</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/#features">Features</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="upload-section">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Upload Your Code</h1>
+                    <p>Select a code file to analyze for security vulnerabilities and get detailed recommendations</p>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="security-notice">
+                    <h3>
+                        <i class="fas fa-shield-alt"></i>
+                        Your Code is Secure
+                    </h3>
+                    <ul class="security-features">
+                        <li><i class="fas fa-check-circle"></i> Files are processed securely and deleted after analysis</li>
+                        <li><i class="fas fa-check-circle"></i> No code is stored or transmitted to third parties</li>
+                        <li><i class="fas fa-check-circle"></i> Enterprise-grade security with encrypted processing</li>
+                        <li><i class="fas fa-check-circle"></i> Maximum file size: 10MB for optimal performance</li>
+                    </ul>
+                </div>
+
+                <!-- Upload Card -->
+                <div class="upload-card">
+                    <div class="card-header">
+                        <h2>Code Security Scanner</h2>
+                        <p>Upload your code file and get instant security analysis</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                            <!-- Upload Area -->
+                            <div class="upload-area" id="uploadArea">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <div class="upload-text">
+                                    <h3>Drag & Drop Your File Here</h3>
+                                    <p>or click the button below to browse</p>
+                                </div>
+                                <button type="button" class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-folder-open"></i> Browse Files
+                                </button>
+                                <input type="file" id="fileInput" name="file" class="file-input" accept=".php,.js,.jsx,.ts,.tsx,.html,.htm,.py,.css,.json,.xml">
+                            </div>
+
+                            <!-- File Info -->
+                            <div class="file-info" id="fileInfo">
+                                <div class="file-details">
+                                    <div class="file-icon">
+                                        <i class="fas fa-file-code"></i>
+                                    </div>
+                                    <div class="file-meta">
+                                        <div class="file-name" id="fileName"></div>
+                                        <div class="file-size" id="fileSize"></div>
+                                    </div>
+                                    <button type="button" class="remove-file" id="removeFile">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="progress-container" id="progressContainer">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="progressFill"></div>
+                                    </div>
+                                    <div class="progress-text" id="progressText">Preparing upload...</div>
+                                </div>
+                            </div>
+
+                            <!-- Error Message -->
+                            <div class="error-message" id="errorMessage"></div>
+
+                            <!-- Upload Button -->
+                            <button type="submit" class="upload-btn" id="uploadBtn">
+                                <i class="fas fa-search"></i> Analyze Code Security
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Supported Formats -->
+                <div class="supported-formats">
+                    <h3>
+                        <i class="fas fa-code"></i>
+                        Supported File Formats
+                    </h3>
+                    <div class="formats-grid">
+                        <div class="format-item">
+                            <i class="fab fa-php format-icon"></i>
+                            <span class="format-name">PHP</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fab fa-js-square format-icon"></i>
+                            <span class="format-name">JavaScript</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fab fa-js format-icon"></i>
+                            <span class="format-name">TypeScript</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fab fa-python format-icon"></i>
+                            <span class="format-name">Python</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fab fa-html5 format-icon"></i>
+                            <span class="format-name">HTML</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fab fa-css3-alt format-icon"></i>
+                            <span class="format-name">CSS</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fas fa-brackets-curly format-icon"></i>
+                            <span class="format-name">JSON</span>
+                        </div>
+                        <div class="format-item">
+                            <i class="fas fa-code format-icon"></i>
+                            <span class="format-name">XML</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Analyzing Your Code</div>
+            <div class="loading-subtext">Please wait while we scan for security vulnerabilities...</div>
+        </div>
+    </div>
+
+    <script>
+        // File upload functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFile = document.getElementById('removeFile');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadForm = document.getElementById('uploadForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+
+        let selectedFile = null;
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        // Remove file
+        removeFile.addEventListener('click', () => {
+            selectedFile = null;
+            fileInput.value = '';
+            fileInfo.classList.remove('show');
+            uploadBtn.classList.remove('show');
+            hideError();
+        });
+
+        // Handle file selection
+        function handleFileSelect(file) {
+            // Validate file
+            const validationResult = validateFile(file);
+            if (!validationResult.valid) {
+                showError(validationResult.message);
+                return;
+            }
+
+            selectedFile = file;
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            
+            fileInfo.classList.add('show');
+            uploadBtn.classList.add('show');
+            hideError();
+        }
+
+        // File validation
+        function validateFile(file) {
+            const allowedExtensions = ['php', 'js', 'jsx', 'ts', 'tsx', 'html', 'htm', 'py', 'css', 'json', 'xml'];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+
+            // Check file size
+            if (file.size > maxSize) {
+                return {
+                    valid: false,
+                    message: 'File is too large. Maximum size allowed is 10MB.'
+                };
+            }
+
+            // Check file extension
+            const extension = file.name.split('.').pop().toLowerCase();
+            if (!allowedExtensions.includes(extension)) {
+                return {
+                    valid: false,
+                    message: `File type .${extension} is not supported. Please upload a supported code file.`
+                };
+            }
+
+            // Check for suspicious filename patterns
+            const suspiciousPatterns = [/\.\./g, /<script/gi, /javascript:/gi];
+            if (suspiciousPatterns.some(pattern => pattern.test(file.name))) {
+                return {
+                    valid: false,
+                    message: 'File name contains suspicious patterns. Please rename your file.'
+                };
+            }
+
+            return { valid: true };
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                hideError();
+            }, 5000);
+        }
+
+        // Hide error message
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        // Form submission
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!selectedFile) {
+                showError('Please select a file to upload.');
+                return;
+            }
+
+            // Show loading overlay
+            loadingOverlay.classList.add('show');
+            progressContainer.style.display = 'block';
+            
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) progress = 90;
+                progressFill.style.width = progress + '%';
+                progressText.textContent = `Analyzing... ${Math.round(progress)}%`;
+            }, 200);
+
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Complete progress
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Analysis complete!';
+
+                if (response.ok) {
+                    // Check if response is JSON (error) or HTML (success)
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Upload failed');
+                    } else {
+                        // Success - redirect to results
+                        window.location.href = response.url;
+                    }
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Upload failed');
+                }
+            } catch (error) {
+                clearInterval(progressInterval);
+                loadingOverlay.classList.remove('show');
+                showError(error.message || 'An error occurred during upload. Please try again.');
+                progressContainer.style.display = 'none';
+            }
+        });
+
+        // Prevent default drag behaviors on the document
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            document.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Update file icon based on file type
+        function updateFileIcon(filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            const fileIcon = document.querySelector('.file-icon i');
+            
+            const iconMap = {
+                'php': 'fab fa-php',
+                'js': 'fab fa-js-square',
+                'jsx': 'fab fa-react',
+                'ts': 'fab fa-js',
+                'tsx': 'fab fa-react',
+                'html': 'fab fa-html5',
+                'htm': 'fab fa-html5',
+                'py': 'fab fa-python',
+                'css': 'fab fa-css3-alt',
+                'json': 'fas fa-brackets-curly',
+                'xml': 'fas fa-code'
+            };
+            
+            fileIcon.className = iconMap[extension] || 'fas fa-file-code';
+        }
+
+        // Update file icon when file is selected
+        const originalHandleFileSelect = handleFileSelect;
+        handleFileSelect = function(file) {
+            originalHandleFileSelect(file);
+            updateFileIcon(file.name);
+        };
+    </script>
+</body>
+</html>
